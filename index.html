@@ -53,9 +53,9 @@
 
         .customer-box { flex: 2; display: flex; flex-direction: column; gap: 6px; }
 
-        .control-row { display: flex; gap: 8px; margin-top: 10px; }
+        /* Mřížka tlačítek upravena na 2x2 pro zachování pořadí */
+        .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .btn-block { 
-            flex: 1; 
             aspect-ratio: 1 / 1.1; 
             border-radius: 12px; 
             display: flex; 
@@ -67,13 +67,13 @@
         }
         
         .btn-top { flex: 1; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-weight: bold; padding: 4px; cursor: pointer; text-transform: uppercase; }
-        .btn-top svg { width: 70px; height: 70px; margin-bottom: 4px; fill: white; }
+        .btn-top svg { width: 60px; height: 60px; margin-bottom: 4px; fill: white; }
 
         .btn-time-input {
             background: transparent;
             border: none !important;
             color: white;
-            font-size: 36px !important;
+            font-size: 32px !important;
             font-weight: bold;
             text-align: center;
             width: 100% !important;
@@ -83,7 +83,7 @@
         }
         .btn-time-input:focus { outline: none; }
 
-        .btn-text { font-size: 16px; font-weight: bold; text-transform: uppercase; }
+        .btn-text { font-size: 14px; font-weight: bold; text-transform: uppercase; }
 
         @keyframes blinker { 50% { opacity: 0.1; } }
         .blinking { animation: blinker 1s linear infinite; }
@@ -96,9 +96,10 @@
         .btn-bottom { background: #fff; padding: 2px; border-top: 1px solid #eee; }
         .btn-bottom input { border: none !important; padding: 4px 2px !important; font-size: 10px !important; text-align: center; background: transparent; width: 100%; }
 
-        .item-row { display: flex; gap: 4px; margin-bottom: 10px; align-items: center; }
-        .item-col { flex: 1; min-width: 0; }
-        .item-col-wide { flex: 1.5; }
+        /* Dvouřádkové uspořádání dílů */
+        .part-item-block { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px; }
+        .part-item-block:last-child { border: none; }
+        .item-row { display: flex; gap: 4px; margin-bottom: 6px; align-items: center; }
 
         .input-group-styled { 
             display: flex; 
@@ -109,6 +110,7 @@
             padding-right: 2px;
             background: white;
             overflow: hidden;
+            flex: 1;
         }
         .input-group-styled input { border: none; border-radius: 6px 0 0 6px; }
 
@@ -152,24 +154,8 @@
     <div class="card">
         <span class="field-label">Popis závady:</span>
         <textarea id="issue-desc" rows="2" placeholder="Popis nahlášené závady..."></textarea>
-        <div class="control-row">
-            <div class="btn-block">
-                <div class="btn-top bg-work" onclick="toggleTimer('work', 'dt-start', 'input-start-work')">
-                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    <input type="text" id="input-start-work" class="btn-time-input" placeholder="00:00" onclick="event.stopPropagation()">
-                    <span class="btn-text">Zahájit práci</span>
-                </div>
-                <div class="btn-bottom"><input type="datetime-local" id="dt-start"></div>
-            </div>
-            <div class="btn-block">
-                <div class="btn-top bg-work-end" onclick="stopTimer('work', 'dt-end', 'input-end-work', 'input-start-work')">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg>
-                    <input type="text" id="input-end-work" class="btn-time-input" placeholder="00:00" onclick="event.stopPropagation()">
-                    <span class="btn-text">Ukončit práci</span>
-                </div>
-                <div class="btn-bottom"><input type="datetime-local" id="dt-end"></div>
-            </div>
-            <div style="width:10px;"></div>
+        
+        <div class="control-grid">
             <div class="btn-block">
                 <div class="btn-top bg-drive" onclick="toggleTimer('drive', 'dt-to', 'input-start-drive', true)">
                     <svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
@@ -186,6 +172,23 @@
                 </div>
                 <div class="btn-bottom"><input type="datetime-local" id="dt-from"></div>
             </div>
+
+            <div class="btn-block">
+                <div class="btn-top bg-work" onclick="toggleTimer('work', 'dt-start', 'input-start-work')">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    <input type="text" id="input-start-work" class="btn-time-input" placeholder="00:00" onclick="event.stopPropagation()">
+                    <span class="btn-text">Zahájit práci</span>
+                </div>
+                <div class="btn-bottom"><input type="datetime-local" id="dt-start"></div>
+            </div>
+            <div class="btn-block">
+                <div class="btn-top bg-work-end" onclick="stopTimer('work', 'dt-end', 'input-end-work', 'input-start-work')">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg>
+                    <input type="text" id="input-end-work" class="btn-time-input" placeholder="00:00" onclick="event.stopPropagation()">
+                    <span class="btn-text">Ukončit práci</span>
+                </div>
+                <div class="btn-bottom"><input type="datetime-local" id="dt-end"></div>
+            </div>
         </div>
         <input type="number" id="km-trip" placeholder="Ujetých KM" style="margin-top:12px;">
     </div>
@@ -193,23 +196,21 @@
     <div class="card">
         <span class="field-label">SEZNAM POUŽITÝCH DÍLŮ:</span>
         <div id="parts-list">
-            <div class="item-row">
-                <div class="item-col item-col-wide">
+            <div class="part-item-block">
+                <div class="item-row">
                     <div class="input-group-styled">
                         <input type="text" class="p-n" placeholder="Díl / Materiál">
                         <button class="btn-plus-flat" onclick="addPart()">+</button>
                     </div>
+                    <div class="input-group-styled" style="flex:0.6;"><input type="text" class="p-note" placeholder="Pozn./ks"></div>
                 </div>
-                <div class="item-col item-col-wide"><div class="input-group-styled"><input type="text" class="p-note" placeholder="Pozn./ks"></div></div>
-                <div class="item-col">
+                <div class="item-row">
                     <div class="input-group-styled">
                         <input type="text" id="o-init" class="p-so" placeholder="S/N pův.">
                         <button class="scan-btn-graphic" onclick="startScanner('o-init')">
                             <svg viewBox="0 0 24 24" fill="none" stroke="#1976d2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2" ry="2"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/><line x1="14" y1="10" x2="14" y2="14"/><line x1="18" y1="10" x2="18" y2="14"/></svg>
                         </button>
                     </div>
-                </div>
-                <div class="item-col">
                     <div class="input-group-styled">
                         <input type="text" id="n-init" class="p-sn" placeholder="S/N nové">
                         <button class="scan-btn-graphic" onclick="startScanner('n-init')">
@@ -349,18 +350,20 @@
     function addPart() {
         const id = Date.now();
         const div = document.createElement('div');
-        div.className = 'item-row';
+        div.className = 'part-item-block';
         div.innerHTML = `
-            <div class="item-col item-col-wide">
+            <div class="item-row">
                 <div class="input-group-styled"><input type="text" class="p-n" placeholder="Díl / Materiál"><button class="btn-del-flat" onclick="confirmDelete(this)">🗑️</button></div>
+                <div class="input-group-styled" style="flex:0.6;"><input type="text" class="p-note" placeholder="Pozn./ks"></div>
             </div>
-            <div class="item-col item-col-wide"><div class="input-group-styled"><input type="text" class="p-note" placeholder="Pozn./ks"></div></div>
-            <div class="item-col"><div class="input-group-styled"><input type="text" id="o-${id}" class="p-so" placeholder="S/N pův."><button class="scan-btn-graphic" onclick="startScanner('o-${id}')">${scanIcon}</button></div></div>
-            <div class="item-col"><div class="input-group-styled"><input type="text" id="n-${id}" class="p-sn" placeholder="S/N nové"><button class="scan-btn-graphic" onclick="startScanner('n-${id}')">${scanIcon}</button></div></div>`;
+            <div class="item-row">
+                <div class="input-group-styled"><input type="text" id="o-${id}" class="p-so" placeholder="S/N pův."><button class="scan-btn-graphic" onclick="startScanner('o-${id}')">${scanIcon}</button></div>
+                <div class="input-group-styled"><input type="text" id="n-${id}" class="p-sn" placeholder="S/N nové"><button class="scan-btn-graphic" onclick="startScanner('n-${id}')">${scanIcon}</button></div>
+            </div>`;
         document.getElementById('parts-list').appendChild(div);
     }
 
-    function confirmDelete(btn) { if (confirm("Chcete opravdu smazat položku?")) { btn.closest('.item-row').remove(); } }
+    function confirmDelete(btn) { if (confirm("Chcete opravdu smazat položku?")) { btn.closest('.part-item-block').remove(); } }
 
     async function startScanner(inputId) {
         document.getElementById('video-container').style.display = 'block';
