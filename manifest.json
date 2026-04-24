@@ -1,0 +1,17 @@
+{
+  "name": "OCTO Speed Servis",
+  "short_name": "OCTO SS",
+  "description": "Aplikace pro servisní jízdy a skenování SN",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7f9",
+  "theme_color": "#1976d2",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/711/711194.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
