@@ -79,25 +79,22 @@
             width: 100% !important;
             padding: 0 !important;
             margin: 2px 0;
-            cursor: text;
         }
-        .btn-time-input:focus { outline: none; }
 
         .btn-text { font-size: 14px; font-weight: bold; text-transform: uppercase; text-align: center; }
 
         @keyframes blinker { 50% { opacity: 0.1; } }
         .blinking { animation: blinker 1s linear infinite; }
 
-        .bg-work { background: linear-gradient(145deg, #1565c0, #0d47a1); }
-        .bg-work-end { background: linear-gradient(145deg, #0d47a1, #0a2f6a); }
         .bg-drive { background: linear-gradient(145deg, #1e88e5, #1565c0); }
         .bg-drive-end { background: linear-gradient(145deg, #1565c0, #0d47a1); }
+        .bg-work { background: linear-gradient(145deg, #1565c0, #0d47a1); }
+        .bg-work-end { background: linear-gradient(145deg, #0d47a1, #0a2f6a); }
 
         .btn-bottom { background: #fff; padding: 2px; border-top: 1px solid #eee; }
         .btn-bottom input { border: none !important; padding: 4px 2px !important; font-size: 10px !important; text-align: center; background: transparent; width: 100%; }
 
         .part-item-block { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px; }
-        .part-item-block:last-child { border: none; }
         .item-row { display: flex; gap: 4px; margin-bottom: 6px; align-items: center; }
 
         .input-group-styled { 
@@ -111,7 +108,7 @@
             overflow: hidden;
             flex: 1;
         }
-        .input-group-styled input { border: none; border-radius: 6px 0 0 6px; }
+        .input-group-styled input { border: none; }
 
         .btn-plus-flat { background: transparent; color: var(--octo-blue); border: none; width: 40px; height: 40px; font-weight: bold; cursor: pointer; font-size: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
         .btn-del-flat { background: transparent; color: var(--danger); border: none; width: 40px; height: 40px; cursor: pointer; font-size: 22px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -122,15 +119,11 @@
         .sig-container { display: flex; gap: 8px; }
         .sig-wrapper { flex: 1; text-align: center; }
         canvas { border: 1px solid #999; background: #fff; width: 100%; height: 90px; touch-action: none; border-radius: 4px; }
-        .btn-clear { background: #999; color: white; border: none; padding: 5px; font-size: 11px; width: 100%; border-radius: 0 0 4px 4px; }
         
-        .action-row { display: flex; gap: 10px; margin-top: 15px; padding-bottom: 20px; }
-        .main-btn { flex: 1; background: var(--octo-blue); color: white; border: none; padding: 18px 5px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .email-btn { flex: 1; background: var(--success); color: white; border: none; padding: 18px 5px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; }
-
         #video-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
         #qr-reader { width: 100%; height: 100%; }
         #close-scanner { position: absolute; top: 20px; right: 20px; z-index: 10000; padding: 15px; background: red; color: white; border: none; border-radius: 50%; font-weight: bold; }
+        .gps-loading { background-color: #fff9c4 !important; }
     </style>
 </head>
 <body>
@@ -140,8 +133,7 @@
     <div class="header-layout">
         <div class="company-box">
             <strong>Your Solutions s.r.o.</strong><br>
-            Türkova 2319/5b<br>
-            149 00 Praha 4 - Chodov<br>
+            Türkova 2319/5b, 149 00 Praha 4 - Chodov<br>
             E-mail: helpdesk@ys.cz | Tel.: +420 277 775 555<br>
             IČ: 22154256 | DIČ: CZ22154256
         </div>
@@ -155,21 +147,21 @@
 
     <div class="card">
         <span class="field-label">Popis závady:</span>
-        <textarea id="issue-desc" rows="2" placeholder="Popis nahlášené závady..."></textarea>
+        <textarea id="issue-desc" rows="2" placeholder="Popis..."></textarea>
         
         <div class="control-grid">
             <div class="btn-block">
                 <div class="btn-top bg-drive" id="btn-drive-start" onclick="toggleTimer('drive', 'dt-to', 'input-start-drive', true)">
                     <svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
-                    <input type="text" id="input-start-drive" class="btn-time-input" placeholder="00:00" onclick="event.stopPropagation()">
+                    <input type="text" id="input-start-drive" class="btn-time-input" placeholder="00:00" readonly>
                     <span class="btn-text" id="txt-drive-start">Zahájit jízdu</span>
                 </div>
                 <div class="btn-bottom"><input type="datetime-local" id="dt-to"></div>
             </div>
             <div class="btn-block">
-                <div class="btn-top bg-drive-end" id="btn-drive-end" onclick="stopTimer('drive', 'dt-from', 'input-end-drive', 'input-start-drive', true)">
+                <div class="btn-top bg-drive-end" onclick="stopTimer('drive', 'dt-from', 'input-end-drive', 'input-start-drive', true)">
                     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg>
-                    <input type="text" id="input-end-drive" class="btn-time-input" placeholder="00:00" onclick="event.stopPropagation()">
+                    <input type="text" id="input-end-drive" class="btn-time-input" placeholder="00:00" readonly>
                     <span class="btn-text" id="txt-drive-end">Ukončit jízdu</span>
                 </div>
                 <div class="btn-bottom"><input type="datetime-local" id="dt-from"></div>
@@ -178,21 +170,21 @@
             <div class="btn-block">
                 <div class="btn-top bg-work" id="btn-work-start" onclick="toggleTimer('work', 'dt-start', 'input-start-work')">
                     <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    <input type="text" id="input-start-work" class="btn-time-input" placeholder="00:00" onclick="event.stopPropagation()">
+                    <input type="text" id="input-start-work" class="btn-time-input" placeholder="00:00" readonly>
                     <span class="btn-text" id="txt-work-start">Zahájit práci</span>
                 </div>
                 <div class="btn-bottom"><input type="datetime-local" id="dt-start"></div>
             </div>
             <div class="btn-block">
-                <div class="btn-top bg-work-end" id="btn-work-end" onclick="stopTimer('work', 'dt-end', 'input-end-work', 'input-start-work')">
+                <div class="btn-top bg-work-end" onclick="stopTimer('work', 'dt-end', 'input-end-work', 'input-start-work')">
                     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg>
-                    <input type="text" id="input-end-work" class="btn-time-input" placeholder="00:00" onclick="event.stopPropagation()">
+                    <input type="text" id="input-end-work" class="btn-time-input" placeholder="00:00" readonly>
                     <span class="btn-text" id="txt-work-end">Ukončit práci</span>
                 </div>
                 <div class="btn-bottom"><input type="datetime-local" id="dt-end"></div>
             </div>
         </div>
-        <input type="number" id="km-trip" placeholder="Ujetých KM" style="margin-top:12px;">
+        <input type="number" id="km-trip" placeholder="Ujetých KM" style="margin-top:12px; font-weight: bold; border: 2px solid var(--octo-blue);">
     </div>
 
     <div class="card">
@@ -231,14 +223,14 @@
 
     <div class="card">
         <div class="sig-container">
-            <div class="sig-wrapper"><span class="field-label">Technik</span><canvas id="sig-worker"></canvas><button class="btn-clear" onclick="clearCanvas('sig-worker')">Smazat</button></div>
-            <div class="sig-wrapper"><span class="field-label">Zákazník</span><canvas id="sig-cust"></canvas><button class="btn-clear" onclick="clearCanvas('sig-cust')">Smazat</button></div>
+            <div class="sig-wrapper"><span class="field-label">Technik</span><canvas id="sig-worker"></canvas></div>
+            <div class="sig-wrapper"><span class="field-label">Zákazník</span><canvas id="sig-cust"></canvas></div>
         </div>
     </div>
 
-    <div class="action-row">
-        <button class="main-btn" onclick="window.print()">TISK / PDF</button>
-        <button class="email-btn" onclick="sendEmail()">EMAIL</button>
+    <div class="action-row" style="display:flex; gap:10px; margin-top:10px;">
+        <button class="main-btn" onclick="window.print()" style="flex:1; padding:18px; background:var(--octo-blue); color:white; border:none; border-radius:10px; font-weight:bold;">TISK / PDF</button>
+        <button class="email-btn" onclick="sendEmail()" style="flex:1; padding:18px; background:var(--success); color:white; border:none; border-radius:10px; font-weight:bold;">EMAIL</button>
     </div>
 </div>
 
@@ -249,7 +241,6 @@
 
 <script>
     let timers = { work: null, drive: null };
-    let startTimes = { work: "", drive: "" };
     let html5QrCode = null;
     const scanIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="#1976d2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2" ry="2"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/><line x1="14" y1="10" x2="14" y2="14"/><line x1="18" y1="10" x2="18" y2="14"/></svg>`;
 
@@ -258,125 +249,52 @@
         return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
     }
 
-    function saveState() {
-        const state = {
-            workRunning: timers.work !== null,
-            driveRunning: timers.drive !== null,
-            startTimeWork: startTimes.work,
-            startTimeDrive: startTimes.drive,
-            dtStart: document.getElementById('dt-start')?.value || "",
-            dtTo: document.getElementById('dt-to')?.value || ""
-        };
-        localStorage.setItem('octo_timer_state', JSON.stringify(state));
-    }
-
-    function loadState() {
-        const saved = localStorage.getItem('octo_timer_state');
-        if (!saved) return;
-        const state = JSON.parse(saved);
-
-        if (state.startTimeWork) {
-            startTimes.work = state.startTimeWork;
-            if(document.getElementById('dt-start')) document.getElementById('dt-start').value = state.dtStart;
-            const input = document.getElementById('input-start-work');
-            if (state.workRunning) {
-                input.classList.add('blinking');
-                input.value = getHHMM();
-                timers.work = setInterval(() => { input.value = getHHMM(); }, 1000);
-                document.getElementById('txt-work-start').innerText = "práce zahájena";
-            } else {
-                input.value = state.startTimeWork;
-            }
-        }
-        if (state.startTimeDrive) {
-            startTimes.drive = state.startTimeDrive;
-            if(document.getElementById('dt-to')) document.getElementById('dt-to').value = state.dtTo;
-            const input = document.getElementById('input-start-drive');
-            if (state.driveRunning) {
-                input.classList.add('blinking');
-                input.value = getHHMM();
-                timers.drive = setInterval(() => { input.value = getHHMM(); }, 1000);
-                document.getElementById('txt-drive-start').innerText = "probíhá jízda";
-            } else {
-                input.value = state.startTimeDrive;
-            }
-        }
-    }
-
     function toggleTimer(type, dtId, inputId, isDrive = false) {
         if (timers[type]) return; 
         const input = document.getElementById(inputId);
         const dtField = document.getElementById(dtId);
         const now = new Date();
         dtField.value = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-        
-        startTimes[type] = getHHMM();
+        input.value = getHHMM();
         input.classList.add('blinking');
-        input.value = startTimes[type];
         timers[type] = setInterval(() => { input.value = getHHMM(); }, 1000);
-
-        if (isDrive) {
-            document.getElementById('txt-drive-start').innerText = "probíhá jízda";
-        } else {
-            document.getElementById('txt-work-start').innerText = "práce zahájena";
-        }
-
+        document.getElementById(isDrive ? 'txt-drive-start' : 'txt-work-start').innerText = isDrive ? "PROBÍHÁ JÍZDA" : "PRÁCE ZAHÁJENA";
         if (isDrive && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(pos => { 
-                const coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-                localStorage.setItem('octo_start_coords', JSON.stringify(coords));
-            });
+            navigator.geolocation.getCurrentPosition(pos => {
+                localStorage.setItem('octo_lat', pos.coords.latitude);
+                localStorage.setItem('octo_lon', pos.coords.longitude);
+            }, null, { enableHighAccuracy: true });
         }
-        saveState();
     }
 
     function stopTimer(type, dtId, inputId, startInputId, isDrive = false) {
         if (timers[type]) { clearInterval(timers[type]); timers[type] = null; }
         const startInput = document.getElementById(startInputId);
         startInput.classList.remove('blinking');
-        if (startTimes[type]) startInput.value = startTimes[type];
-
         const now = new Date();
         document.getElementById(dtId).value = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
         document.getElementById(inputId).value = getHHMM();
-
-        if (isDrive) {
-            document.getElementById('txt-drive-start').innerText = "jízda ukončena";
-            document.getElementById('txt-drive-end').innerText = "jízda ukončena";
-        } else {
-            document.getElementById('txt-work-start').innerText = "práce ukončena";
-            document.getElementById('txt-work-end').innerText = "práce ukončena";
-        }
+        
+        const labelText = isDrive ? "JÍZDA UKONČENA" : "PRÁCE UKONČENA";
+        document.getElementById(isDrive ? 'txt-drive-start' : 'txt-work-start').innerText = labelText;
+        document.getElementById(isDrive ? 'txt-drive-end' : 'txt-work-end').innerText = labelText;
 
         if (isDrive && navigator.geolocation) {
-            const savedCoords = localStorage.getItem('octo_start_coords');
-            if (savedCoords) {
-                const startCoords = JSON.parse(savedCoords);
-                navigator.geolocation.getCurrentPosition(pos => {
+            const kmField = document.getElementById('km-trip');
+            kmField.classList.add('gps-loading');
+            kmField.placeholder = "Vypočítávám...";
+            navigator.geolocation.getCurrentPosition(pos => {
+                const lat1 = parseFloat(localStorage.getItem('octo_lat'));
+                const lon1 = parseFloat(localStorage.getItem('octo_lon'));
+                if (lat1 && lon1) {
                     const R = 6371;
-                    const dLat = (pos.coords.latitude - startCoords.lat) * Math.PI / 180;
-                    const dLon = (pos.coords.longitude - startCoords.lon) * Math.PI / 180;
-                    const a = Math.sin(dLat/2)**2 + Math.cos(startCoords.lat*Math.PI/180)*Math.cos(pos.coords.latitude*Math.PI/180)*Math.sin(dLon/2)**2;
-                    const d = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                    
-                    const kmInput = document.getElementById('km-trip');
-                    if (kmInput) {
-                        kmInput.value = Math.round(d * 1.3);
-                        kmInput.dispatchEvent(new Event('change'));
-                    }
-                    localStorage.removeItem('octo_start_coords');
-                }, null, { enableHighAccuracy: true, timeout: 5000 });
-            }
-        }
-        saveState();
-    }
-
-    function openNav() {
-        const adresa = document.getElementById('customer').value;
-        if (adresa) { 
-            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adresa)}`, '_blank'); 
-        } else { 
-            alert("Zadejte adresu zákazníka."); 
+                    const dLat = (pos.coords.latitude - lat1) * Math.PI / 180;
+                    const dLon = (pos.coords.longitude - lon1) * Math.PI / 180;
+                    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(pos.coords.latitude*Math.PI/180)*Math.sin(dLon/2)**2;
+                    kmField.value = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.3);
+                }
+                kmField.classList.remove('gps-loading');
+            }, () => kmField.classList.remove('gps-loading'), { enableHighAccuracy: true, timeout: 10000 });
         }
     }
 
@@ -386,7 +304,7 @@
         div.className = 'part-item-block';
         div.innerHTML = `
             <div class="item-row">
-                <div class="input-group-styled"><input type="text" class="p-n" placeholder="Díl / Materiál"><button class="btn-del-flat" onclick="confirmDelete(this)">🗑️</button></div>
+                <div class="input-group-styled"><input type="text" class="p-n" placeholder="Díl / Materiál"><button class="btn-del-flat" onclick="this.closest('.part-item-block').remove()">🗑️</button></div>
                 <div class="input-group-styled" style="flex:0.6;"><input type="text" class="p-note" placeholder="Pozn./ks"></div>
             </div>
             <div class="item-row">
@@ -396,82 +314,52 @@
         document.getElementById('parts-list').appendChild(div);
     }
 
-    function confirmDelete(btn) { if (confirm("Chcete opravdu smazat položku?")) { btn.closest('.part-item-block').remove(); } }
-
     async function startScanner(inputId) {
         document.getElementById('video-container').style.display = 'block';
         html5QrCode = new Html5Qrcode("qr-reader");
         const config = { 
-            fps: 10, 
-            qrbox: { width: 280, height: 180 },
-            aspectRatio: 1.0,
-            videoConstraints: {
-                facingMode: "environment",
-                focusMode: "continuous",
-                whiteBalanceMode: "continuous"
-            }
+            fps: 25, 
+            qrbox: { width: 280, height: 160 },
+            formatsToSupport: [ 
+                Html5QrcodeSupportedFormats.CODE_128, 
+                Html5QrcodeSupportedFormats.CODE_39, 
+                Html5QrcodeSupportedFormats.EAN_13, 
+                Html5QrcodeSupportedFormats.QR_CODE 
+            ]
         };
-
         try {
-            await html5QrCode.start(
-                { facingMode: "environment" }, 
-                config,
-                (decodedText) => {
-                    document.getElementById(inputId).value = decodedText;
-                    stopScanner();
-                }
-            ).catch((err) => {
-                console.error("Scanner start error", err);
-                alert("Nepodařilo se spustit kameru.");
+            await html5QrCode.start({ facingMode: "environment" }, config, (text) => {
+                document.getElementById(inputId).value = text;
                 stopScanner();
             });
-        } catch (err) {
-            alert("Chyba kamery nebo nepovolený přístup.");
-            stopScanner();
-        }
+        } catch (e) { stopScanner(); }
     }
 
     function stopScanner() {
-        if (html5QrCode) {
-            html5QrCode.stop().then(() => {
-                document.getElementById('video-container').style.display = 'none';
-                html5QrCode = null;
-            }).catch(() => {
-                document.getElementById('video-container').style.display = 'none';
-                html5QrCode = null;
-            });
-        } else {
-            document.getElementById('video-container').style.display = 'none';
-        }
+        if (html5QrCode) html5QrCode.stop().finally(() => document.getElementById('video-container').style.display = 'none');
     }
 
     function setupCanvas(id) {
         const canvas = document.getElementById(id);
         const ctx = canvas.getContext("2d");
-        let drawing = false;
         canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-        const getPos = (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const cx = e.clientX || (e.touches && e.touches[0].clientX);
-            const cy = e.clientY || (e.touches && e.touches[0].clientY);
-            return { x: cx - rect.left, y: cy - rect.top };
-        };
-        const start = (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); };
-        const move = (e) => { if(!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); };
-        canvas.addEventListener("mousedown", start); canvas.addEventListener("touchstart", start);
-        canvas.addEventListener("mousemove", move); canvas.addEventListener("touchmove", move);
-        window.addEventListener("mouseup", () => drawing = false); window.addEventListener("touchend", () => drawing = false);
+        let draw = false;
+        const pos = (e) => ({ x: (e.clientX || e.touches[0].clientX) - canvas.getBoundingClientRect().left, y: (e.clientY || e.touches[0].clientY) - canvas.getBoundingClientRect().top });
+        canvas.onmousedown = canvas.ontouchstart = (e) => { draw = true; ctx.beginPath(); const p = pos(e); ctx.moveTo(p.x, p.y); };
+        canvas.onmousemove = canvas.ontouchmove = (e) => { if(draw) { const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); } };
+        window.onmouseup = window.ontouchend = () => draw = false;
     }
 
-    function clearCanvas(id) { document.getElementById(id).getContext("2d").clearRect(0, 0, 2000, 2000); }
+    function openNav() {
+        const a = document.getElementById('customer').value;
+        if (a) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a)}`);
+    }
 
     function sendEmail() {
-        const mail = document.getElementById('customer-email').value;
-        const id = document.getElementById('order-id').value;
-        window.location.href = `mailto:${mail}?subject=Servisní protokol ${id}`;
+        window.location.href = `mailto:${document.getElementById('customer-email').value}?subject=Protokol ${document.getElementById('order-id').value}`;
     }
 
-    window.onload = () => { setupCanvas("sig-worker"); setupCanvas("sig-cust"); loadState(); };
+    window.onload = () => { setupCanvas("sig-worker"); setupCanvas("sig-cust"); };
 </script>
 </body>
 </html>
