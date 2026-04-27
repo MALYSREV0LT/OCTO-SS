@@ -341,11 +341,11 @@
         document.getElementById(inputId).value = getHHMM();
 
         if (isDrive) {
-            document.getElementById('txt-drive-start').innerText = "jizda ukončena";
-            document.getElementById('txt-drive-end').innerText = "jizda ukončena";
+            document.getElementById('txt-drive-start').innerText = "jízda ukončena";
+            document.getElementById('txt-drive-end').innerText = "jízda ukončena";
         } else {
-            document.getElementById('txt-work-start').innerText = "prace ukoncena";
-            document.getElementById('txt-work-end').innerText = "prace ukoncena";
+            document.getElementById('txt-work-start').innerText = "práce ukončena";
+            document.getElementById('txt-work-end').innerText = "práce ukončena";
         }
 
         if (isDrive && navigator.geolocation) {
@@ -401,7 +401,16 @@
     async function startScanner(inputId) {
         document.getElementById('video-container').style.display = 'block';
         html5QrCode = new Html5Qrcode("qr-reader");
-        const config = { fps: 10, qrbox: { width: 250, height: 150 } };
+        const config = { 
+            fps: 10, 
+            qrbox: { width: 280, height: 180 },
+            aspectRatio: 1.0,
+            videoConstraints: {
+                facingMode: "environment",
+                focusMode: "continuous",
+                whiteBalanceMode: "continuous"
+            }
+        };
 
         try {
             await html5QrCode.start(
@@ -411,7 +420,11 @@
                     document.getElementById(inputId).value = decodedText;
                     stopScanner();
                 }
-            );
+            ).catch((err) => {
+                console.error("Scanner start error", err);
+                alert("Nepodařilo se spustit kameru.");
+                stopScanner();
+            });
         } catch (err) {
             alert("Chyba kamery nebo nepovolený přístup.");
             stopScanner();
@@ -422,8 +435,10 @@
         if (html5QrCode) {
             html5QrCode.stop().then(() => {
                 document.getElementById('video-container').style.display = 'none';
+                html5QrCode = null;
             }).catch(() => {
                 document.getElementById('video-container').style.display = 'none';
+                html5QrCode = null;
             });
         } else {
             document.getElementById('video-container').style.display = 'none';
