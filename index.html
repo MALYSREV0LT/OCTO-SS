@@ -37,7 +37,6 @@
         .btn-top { flex: 1; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-weight: bold; padding: 4px; cursor: pointer; text-transform: uppercase; position: relative; }
         .btn-top svg { width: 45px; height: 45px; margin-bottom: 4px; fill: white; pointer-events: none; }
 
-        /* Čas v tlačítku - nyní plně editovatelný */
         .btn-time-input { background: rgba(255,255,255,0.2) !important; border: 1px solid rgba(255,255,255,0.5) !important; color: white !important; font-size: 28px !important; font-weight: bold; text-align: center; width: 90% !important; padding: 2px !important; margin: 2px 0; border-radius: 4px; z-index: 20; }
 
         .btn-text { font-size: 11px; font-weight: bold; text-transform: uppercase; text-align: center; pointer-events: none; margin-top: 2px; }
@@ -177,6 +176,16 @@
     let timers = { work: null, drive: null };
     let startTimes = { work: "", drive: "" };
     let html5QrCode = null;
+    let wakeLock = null;
+
+    // Funkce pro zabránění vypnutí aplikace / uspání
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+            }
+        } catch (err) { console.log("WakeLock error"); }
+    }
 
     function getHHMM() {
         const d = new Date();
@@ -185,20 +194,28 @@
 
     function startTimer(type, dtId, inputId, textId) {
         if (timers[type]) return; 
+        requestWakeLock(); // Aktivace zámku obrazovky při zahájení aktivity
+        
         const input = document.getElementById(inputId);
         const textField = document.getElementById(textId);
         const now = new Date();
         
-        // Zápis do políčka pod tlačítkem
-        document.getElementById(dtId).value = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        const isoStr = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        document.getElementById(dtId).value = isoStr;
         
         const time = getHHMM();
         input.value = time;
         startTimes[type] = time;
+        
+        // Záloha pro případ pádu aplikace/pozadí
+        localStorage.setItem(`start_${type}`, now.getTime());
+        
         input.classList.add('blinking');
         textField.innerText = (type === 'drive' ? "JÍZDA PROBÍHÁ" : "PRÁCE PROBÍHÁ");
 
-        timers[type] = setInterval(() => { input.value = getHHMM(); }, 1000);
+        timers[type] = setInterval(() => { 
+            input.value = getHHMM(); 
+        }, 1000);
 
         if (type === 'drive' && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
@@ -213,11 +230,12 @@
         clearInterval(timers[type]);
         timers[type] = null;
         
+        if (wakeLock) { wakeLock.release(); wakeLock = null; }
+
         const startInput = document.getElementById(startInputId);
         const endInput = document.getElementById(inputId);
         const now = new Date();
 
-        // Zápis data a času UKONČENÍ do políčka pod tlačítkem
         document.getElementById(dtId).value = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
         
         startInput.classList.remove('blinking');
@@ -235,12 +253,13 @@
                 const lat1 = parseFloat(localStorage.getItem('lat1'));
                 const lon1 = parseFloat(localStorage.getItem('lon1'));
                 if (lat1 && lon1) {
-                    const R = 6371;
+                    const R = 6371; 
                     const dLat = (pos.coords.latitude - lat1) * Math.PI / 180;
                     const dLon = (pos.coords.longitude - lon1) * Math.PI / 180;
                     const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(pos.coords.latitude*Math.PI/180)*Math.sin(dLon/2)**2;
                     const dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                    kmField.value = Math.round(dist * 1.3); // Koeficient pro cestu po silnici
+                    // Výpočet: Vzdušná čára * 1.3 pro silniční odhad
+                    kmField.value = (dist * 1.3).toFixed(1);
                 }
                 kmField.classList.remove('gps-loading');
             }, () => kmField.classList.remove('gps-loading'), { enableHighAccuracy: true });
@@ -263,19 +282,46 @@
         document.getElementById('parts-list').appendChild(div);
     }
 
+    // Vylepšená čtečka pro lepší ostření na Androidu
     async function startScanner(inputId) {
         document.getElementById('video-container').style.display = 'block';
-        html5QrCode = new Html5Qrcode("qr-reader");
+        if (html5QrCode === null) {
+            html5QrCode = new Html5Qrcode("qr-reader");
+        }
+        
+        const config = { 
+            fps: 20, 
+            qrbox: { width: 300, height: 200 }, // Zvětšeno pro lepší zaměření
+            aspectRatio: 1.0
+        };
+
         try {
-            await html5QrCode.start({ facingMode: "environment" }, { fps: 25, qrbox: { width: 280, height: 160 } }, (text) => {
-                document.getElementById(inputId).value = text;
-                stopScanner();
-            });
-        } catch (e) { stopScanner(); }
+            await html5QrCode.start(
+                { facingMode: "environment" }, 
+                config, 
+                (decodedText) => {
+                    document.getElementById(inputId).value = decodedText;
+                    // Hmatová odezva (pokud mobil podporuje)
+                    if (navigator.vibrate) navigator.vibrate(100);
+                    stopScanner();
+                }
+            );
+        } catch (e) { 
+            alert("Chyba kamery: " + e);
+            stopScanner(); 
+        }
     }
 
     function stopScanner() {
-        if (html5QrCode) html5QrCode.stop().finally(() => document.getElementById('video-container').style.display = 'none');
+        if (html5QrCode) {
+            html5QrCode.stop().then(() => {
+                document.getElementById('video-container').style.display = 'none';
+            }).catch(err => {
+                document.getElementById('video-container').style.display = 'none';
+            });
+        } else {
+            document.getElementById('video-container').style.display = 'none';
+        }
     }
 
     function setupCanvas(id) {
@@ -302,10 +348,16 @@
     }
 
     function sendEmail() {
-        window.location.href = `mailto:${document.getElementById('customer-email').value}?subject=Protokol ${document.getElementById('order-id').value}`;
+        const body = `Zakázka: ${document.getElementById('order-id').value}\nPráce: ${document.getElementById('work-desc').value}`;
+        window.location.href = `mailto:${document.getElementById('customer-email').value}?subject=Servisní protokol ${document.getElementById('order-id').value}&body=${encodeURIComponent(body)}`;
     }
 
-    window.onload = () => { setupCanvas("sig-worker"); setupCanvas("sig-cust"); };
+    window.onload = () => { 
+        setupCanvas("sig-worker"); 
+        setupCanvas("sig-cust");
+        // Pokus o WakeLock hned při načtení
+        document.addEventListener('click', requestWakeLock, { once: true });
+    };
 </script>
 </body>
 </html>
