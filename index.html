@@ -69,6 +69,9 @@
         .sig-wrapper { flex: 1; text-align: center; position: relative; }
         canvas { border: 1px solid #999; background: #fff; width: 100%; height: 100px; touch-action: none; border-radius: 4px; position: relative; z-index: 5; }
         
+        .btn-clear-sig { position: absolute; top: 22px; right: 4px; z-index: 10; background: rgba(211, 47, 47, 0.1); color: var(--danger); border: none; border-radius: 50%; width: 26px; height: 26px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+        .btn-clear-sig:hover { background: rgba(211, 47, 47, 0.2); }
+
         #video-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
         #qr-reader { width: 100%; height: 100%; }
         #close-scanner { position: absolute; top: 20px; right: 20px; z-index: 10000; padding: 15px; background: red; color: white; border: none; border-radius: 50%; font-weight: bold; }
@@ -157,8 +160,16 @@
 
     <div class="card">
         <div class="sig-container">
-            <div class="sig-wrapper"><span class="field-label">Technik</span><canvas id="sig-worker"></canvas></div>
-            <div class="sig-wrapper"><span class="field-label">Zákazník</span><canvas id="sig-cust"></canvas></div>
+            <div class="sig-wrapper">
+                <span class="field-label">Technik</span>
+                <canvas id="sig-worker"></canvas>
+                <button class="btn-clear-sig" onclick="clearCanvas('sig-worker')" title="Vymazat podpis">✕</button>
+            </div>
+            <div class="sig-wrapper">
+                <span class="field-label">Zákazník</span>
+                <canvas id="sig-cust"></canvas>
+                <button class="btn-clear-sig" onclick="clearCanvas('sig-cust')" title="Vymazat podpis">✕</button>
+            </div>
         </div>
     </div>
 
@@ -325,6 +336,12 @@
         canvas.onmousedown = start; 
         canvas.onmousemove = move; 
         window.onmouseup = stop;
+    }
+
+    function clearCanvas(id) {
+        const canvas = document.getElementById(id);
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     function openNav() {
